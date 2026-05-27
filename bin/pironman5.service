@@ -9,6 +9,7 @@ Type=simple
 User=root
 Group=root
 WorkingDirectory=/opt/pironman5
+Environment=LD_LIBRARY_PATH=/usr/local/lib
 ExecStart=/usr/local/bin/pironman5 start
 # PrivateTmp=False
 
