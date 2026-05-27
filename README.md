@@ -1,36 +1,37 @@
-# Pironman 5 - Arch Linux Fork (Endeavour)
+# Pironman 5 - Arch Linux Fork
 
-Pironman 5 case - Arch Linux compatible fork
+Arch Linux compatible fork of the [SunFounder Pironman 5](https://github.com/sunfounder/pironman5) case software for Raspberry Pi 5.
 
-Quick Links:
+## Table of Contents
 
-- [Pironman 5](#pironman-5---arch-linux-fork-endeavour)
-  - [About Pironman5](#about-pironman5)
-  - [Links](#links)
-  - [Installation](#installation)
-  - [Auto launch dashboard on browser](#auto-launch-dashboard-on-browser)
-  - [Update](#update)
-  - [Compatible Systems](#compatible-systems)
-    - [Debug](#debug)
-  - [About SunFounder](#about-sunfounder)
-  - [Contact us](#contact-us)
+- [About](#about)
+- [Requirements](#requirements)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Uninstall](#uninstall)
+- [Compatible Systems](#compatible-systems)
+- [Debug](#debug)
+- [Links](#links)
 
-## About Pironman5
+## About
 
-## Links
+This fork replaces all Debian/Ubuntu-specific tooling (`apt`, `dpkg`) with Arch Linux equivalents (`pacman`). It targets Arch Linux ARM and derivatives running on Raspberry Pi 5.
 
-- SunFounder Online Store &emsp; <https://www.sunfounder.com/>
-- Documentation &emsp; <https://docs.sunfounder.com/projects/pironman5/en/latest/>
+## Requirements
+
+- Arch Linux ARM (aarch64) or any Arch-based distro on Raspberry Pi 5
+- `git` and `python` installed
+- Root / sudo access
 
 ## Installation
 
-For systems that don't have git and python3 pre-installed you need to install them first
+Install prerequisites if not already present:
 
 ```bash
 sudo pacman -S --needed git python
 ```
 
-Execute the installation script
+Clone and run the installer:
 
 ```bash
 cd ~
@@ -39,81 +40,77 @@ cd ~/pironman5-endeavour
 sudo python3 install.py
 ```
 
-## Auto launch dashboard on browser
+To skip the dashboard (InfluxDB):
 
 ```bash
-pironman5 launch-browser --auto-start=on
+sudo python3 install.py --disable-dashboard
 ```
 
-You also want to change touchscreen mode to Multitouch instead of Mouse Emulation.
+To skip reboot prompt:
 
-1. **Raspberry Pi Icon** >> **Preferences** >> **Control Centre**.
-2. Select **Screen** tab.
-3. Long press/right click on **DSI-2**, 
-4. Select **Touchscreen** >> **Mode** >> **Multitouch**.
+```bash
+sudo python3 install.py --skip-reboot
+```
 
-## Update
+## Usage
 
-<https://github.com/sunfounder/pironman5/blob/main/CHANGELOG.md>
+```bash
+# Show help and current config
+sudo pironman5 -c
+
+# Start manually
+sudo pironman5 start
+
+# Service control
+sudo systemctl start pironman5.service
+sudo systemctl stop pironman5.service
+sudo systemctl restart pironman5.service
+sudo systemctl status pironman5.service
+```
+
+## Uninstall
+
+```bash
+sudo python3 install.py --uninstall
+```
 
 ## Compatible Systems
 
-Operating systems targeting Arch Linux on Raspberry Pi 5:
+Systems tested or targeted on Raspberry Pi 5:
 
-Operate System|Release Date|Compatible
-:---|:---:|:---:
-Arch Linux ARM (aarch64)|–|Target
-EndeavourOS ARM|–|Target
+| Operating System | Status |
+| :--- | :---: |
+| Arch Linux ARM (aarch64) | Target |
+| EndeavourOS ARM | Target |
+| Manjaro ARM | Target |
 
-### Debug
+## Debug
 
-Clone the dependency you want to debug or edit
+Clone the dependencies you want to debug or edit:
 
 ```bash
-git clone https://github.com/sunfounder/pironman5.git
 git clone https://github.com/sunfounder/pm_dashboard.git
 git clone https://github.com/sunfounder/pm_auto.git
 git clone https://github.com/sunfounder/sf_rpi_status.git
 ```
 
-Make adjustments, and manually install the package
+Reinstall a package from local source:
 
 ```bash
-# install from folder
-sudo /opt/pironman5/venv/bin/pip3 uninstall pironman5 -y && sudo /opt/pironman5/venv/bin/pip3 install ~/pironman5 --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
-sudo /opt/pironman5/venv/bin/pip3 uninstall pm_dashboard -y && sudo /opt/pironman5/venv/bin/pip3 install ~/pm_dashboard --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
-sudo /opt/pironman5/venv/bin/pip3 uninstall pm_auto -y && sudo /opt/pironman5/venv/bin/pip3 install ~/pm_auto --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
-sudo /opt/pironman5/venv/bin/pip3 uninstall sf_rpi_status -y && sudo /opt/pironman5/venv/bin/pip3 install ~/sf_rpi_status --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
-sudo /opt/pironman5/venv/bin/pip3 uninstall pipower5 -y && sudo /opt/pironman5/venv/bin/pip3 install ~/pipower5 --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
-
-# install from github repo
-sudo /opt/pironman5/venv/bin/pip3 uninstall sf_rpi_status -y && sudo /opt/pironman5/venv/bin/pip3 install git+https://github.com/sunfounder/sf_rpi_status.git --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
-sudo /opt/pironman5/venv/bin/pip3 uninstall pipower5 -y && sudo /opt/pironman5/venv/bin/pip3 install git+https://github.com/sunfounder/pipower5.git --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
-sudo /opt/pironman5/venv/bin/pip3 uninstall pm_auto -y && sudo /opt/pironman5/venv/bin/pip3 install git+https://github.com/sunfounder/pm_auto.git@1.4.x --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
-sudo /opt/pironman5/venv/bin/pip3 uninstall pm_dashboard -y && sudo /opt/pironman5/venv/bin/pip3 install git+https://github.com/sunfounder/pm_dashboard.git@1.3.x --no-build-isolation && sudo chown -R pironman5:pironman5 /opt/pironman5
+cd ~/pironman5-endeavour && sudo /opt/pironman5/venv/bin/pip3 uninstall pironman5 -y && sudo /opt/pironman5/venv/bin/pip3 install . --no-build-isolation
+cd ~/pm_dashboard && sudo /opt/pironman5/venv/bin/pip3 uninstall pm_dashboard -y && sudo /opt/pironman5/venv/bin/pip3 install . --no-build-isolation
+cd ~/pm_auto && sudo /opt/pironman5/venv/bin/pip3 uninstall pm_auto -y && sudo /opt/pironman5/venv/bin/pip3 install . --no-build-isolation
+cd ~/sf_rpi_status && sudo /opt/pironman5/venv/bin/pip3 uninstall sf_rpi_status -y && sudo /opt/pironman5/venv/bin/pip3 install . --no-build-isolation
 ```
 
-
-Start/stop the service for debug
+Open a Python shell inside the venv:
 
 ```bash
-sudo systemctl stop pironman5.service
-sudo systemctl start pironman5.service
-sudo systemctl restart pironman5.service
-sudo -u pironman5 /opt/pironman5/venv/bin/python3
-
-journalctl -xefu pironman5.service
-sudo systemctl restart pironman5.service && journalctl -xefu pironman5.service
+sudo /opt/pironman5/venv/bin/python3
 ```
 
-## About SunFounder
+## Links
 
-SunFounder is a company focused on STEAM education with products like open source robots, development boards, STEAM kit, modules, tools and other smart devices distributed globally. In SunFounder, we strive to help elementary and middle school students as well as hobbyists, through STEAM education, strengthen their hands-on practices and problem-solving abilities. In this way, we hope to disseminate knowledge and provide skill training in a full-of-joy way, thus fostering your interest in programming and making, and exposing you to a fascinating world of science and engineering. To embrace the future of artificial intelligence, it is urgent and meaningful to learn abundant STEAM knowledge.
-
-## Contact us
-
-website:
-    www.sunfounder.com
-
-E-mail:
-    service@sunfounder.com
+- Original project: <https://github.com/sunfounder/pironman5>
+- SunFounder documentation: <https://docs.sunfounder.com/en/latest/>
+- SunFounder store: <https://www.sunfounder.com/>
