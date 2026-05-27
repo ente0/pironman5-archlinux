@@ -39,7 +39,7 @@ settings = {
         '--system-site-packages',
     ],
 
-    # - Build required apt dependencies, default to []
+    # - Build required pacman dependencies, default to []
     # 'build_dependencies': [
     #     'curl', # for influxdb key download
     # ],
@@ -49,9 +49,9 @@ settings = {
     #     'Install LGPIO': 'bash scripts/install_lgpio.sh',
     # },
 
-    # - Install from apt
-    'apt_dependencies': [
-        'python3-dev',
+    # - Install from pacman
+    'pacman_dependencies': [
+        'python',
     ],
 
     # - Install from pip
@@ -97,11 +97,11 @@ ws2812_settings = {
 }
 
 oled_settings = {
-    # - Install from apt
-    'apt_dependencies': [
-        'libjpeg-dev', # for Pillow on 32 bit OS
-        'libfreetype6-dev', # for Pillow on 32 bit OS
-        'libopenjp2-7', # for Pillow on 32 bit OS
+    # - Install from pacman
+    'pacman_dependencies': [
+        'libjpeg-turbo',
+        'freetype2',
+        'openjpeg2',
         'kmod',
         'i2c-tools',
     ],
@@ -123,10 +123,7 @@ gpio_settings = {
         'Install LGPIO': 'bash scripts/install_lgpio.sh',
     },
 
-    # - Install from apt
-    'apt_dependencies': [
-        'python3-gpiozero', # for pm_auto fan control
-    ],
+    'pacman_dependencies': [],
     # - Install from pip
     'pip_dependencies': [
         'gpiozero',
@@ -137,14 +134,14 @@ gpio_settings = {
 
 dashboard_settings = {
     'build_dependencies': [
-        'curl', # for influxdb key download
+        'curl',
     ],
     'run_commands_before_install': {
         'Setup InfluxDB': 'bash scripts/setup_influxdb.sh',
     },
-    'apt_dependencies': [
-        'influxdb', # for pm_dashboard
-        'lsof', # for pm_dashboard
+    'pacman_dependencies': [
+        'influxdb',
+        'lsof',
     ],
     'python_source': {
         'pm_dashboard': f'git+https://github.com/sunfounder/pm_dashboard.git@1.2.10',

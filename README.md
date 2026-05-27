@@ -1,17 +1,16 @@
-# Pironman 5
+# Pironman 5 - Arch Linux Fork (Endeavour)
 
-Pironman 5 case
+Pironman 5 case - Arch Linux compatible fork
 
 Quick Links:
 
-- [Pironman 5](#pironman-5)
+- [Pironman 5](#pironman-5---arch-linux-fork-endeavour)
   - [About Pironman5](#about-pironman5)
   - [Links](#links)
   - [Installation](#installation)
   - [Usage](#usage)
   - [Update](#update)
   - [Compatible Systems](#compatible-systems)
-    - [Ubuntu 24.04 server eth0 and wifi not work](#ubuntu-2404-server-eth0-and-wifi-not-work)
     - [Debug](#debug)
   - [About SunFounder](#about-sunfounder)
   - [Contact us](#contact-us)
@@ -25,19 +24,18 @@ Quick Links:
 
 ## Installation
 
-For systems that don't have git, python3 pre-installed you need to install them first
+For systems that don't have git and python3 pre-installed you need to install them first
 
 ```bash
-sudo apt-get update
-sudo apt-get install git python3 -y
+sudo pacman -S --needed git python
 ```
 
 Execute the installation script
 
 ```bash
 cd ~
-git clone https://github.com/sunfounder/pironman5.git
-cd ~/pironman5
+git clone https://github.com/ente0/pironman5-endeavour.git
+cd ~/pironman5-endeavour
 sudo python3 install.py
 ```
 
@@ -51,25 +49,12 @@ sudo python3 install.py
 
 ## Compatible Systems
 
-Operate Systems that passed the test on the Raspberry Pi 5:
+Operating systems targeting Arch Linux on Raspberry Pi 5:
 
-Operate System | Release Date | Compatible
-:---   | :---: | :---: 
-Raspberry Pi OS Desktop - Trixie (64 bit) | 2025-10-01 | &#x2705;
-Raspberry Pi OS Desktop - Trixie (32 bit) | 2025-10-01 |  &#x2705;
-Raspberry Pi OS Full - Trixie (64 bit) | 2025-10-01 |  &#x2705;
-Raspberry Pi OS Full - Trixie (32 bit) | 2025-10-01 |  &#x2705;
-Raspberry Pi OS lite - Trixie (64 bit) | 2025-10-01 |  &#x2705;
-Raspberry Pi OS lite - Trixie (64 bit) | 2025-10-01 |  &#x2705;
-Ubuntu Desktop 25.04 LTS (64 bit) | 2025-04-17 |  &#x2705;
-Ubuntu Server 25.04 LTS (64 bit) | 2025-04-17 |  &#x2705;
-Ubuntu Desktop 25.10 (64 bit) | 2025-10-09 |   &#x2705;
-Ubuntu Server 25.10 (64 bit) | 2025-10-09 |   &#x2705;
-Kali Linux | 2025-09-18 | &#x2705;
-Home Assistant OS 16.3 | 2025-11-04 | &#x2705;
-Homebridge bookworm (64 bit) | 2025-07-16 | &#x2705;
-Homebridge bookworm (64 bit) | 2025-07-16 | &#x2705;
-Umbrel OS 1.5 | 2025-11-5 | &#x2705;
+Operate System|Release Date|Compatible
+:---|:---:|:---:
+Arch Linux ARM (aarch64)|–|Target
+EndeavourOS ARM|–|Target
 
 ### Debug
 
