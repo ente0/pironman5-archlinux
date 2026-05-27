@@ -3,7 +3,7 @@
 set -euo pipefail
 trap 'echo "Error occurred. Exiting..." >&2; exit 1' ERR
 
-echo "=== LGPIO Installation Script (Universal Compatibility) ==="
+echo "=== LGPIO Installation Script (Arch Linux) ==="
 
 # 1. Check for root privileges
 if [ "$EUID" -ne 0 ]; then
@@ -11,19 +11,19 @@ if [ "$EUID" -ne 0 ]; then
   exit 1
 fi
 
-# 2. Try to install via package manager first (fastest & cleanest)
-echo "- Attempting to install via apt..."
-if DEBIAN_FRONTEND=noninteractive apt-get install -y liblgpio-dev python3-lgpio 2>/dev/null; then
-    echo "✓ LGPIO installed successfully via apt."
+# 2. Try to install via pacman first
+echo "- Attempting to install via pacman..."
+if pacman -S --noconfirm --needed lgpio python-lgpio 2>/dev/null; then
+    echo "LGPIO installed successfully via pacman."
     exit 0
 else
-    echo "! apt package not found. Proceeding with source compilation."
+    echo "! pacman package not found. Proceeding with source compilation."
 fi
 
 # 3. Install build dependencies
 echo "- Installing build dependencies..."
-DEBIAN_FRONTEND=noninteractive apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y swig python3-dev python3-setuptools unzip wget make gcc
+pacman -Sy --noconfirm
+pacman -S --noconfirm --needed swig python python-setuptools unzip wget make gcc
 
 # 4. Download and extract source
 echo "- Downloading LGPIO source..."
@@ -35,14 +35,8 @@ cd lg
 # 5. Apply compatibility patches for modern GCC (GCC 14+)
 echo "- Patching source and Makefile for GNU89 compatibility..."
 
-# Modify the callback definition to accept variable arguments (...) 
-# This prevents "too many arguments" errors in modern C standards
 sed -i 's/typedef void (\*callbk_t) ();/typedef void (*callbk_t) (...);/' lgpio.h
 
-# Force the Makefile to use the gnu89 standard and suppress strict type errors
-# -std=gnu89: Allows old-style function declarations
-# -fpermissive: Downgrades some errors to warnings
-# -Wno-everything: Suppresses the flood of warnings for cleaner output
 sed -i 's/^gcc/gcc -std=gnu89 -fpermissive -Wno-everything/' Makefile
 sed -i 's/CFLAGS +=/CFLAGS += -std=gnu89 -fpermissive -Wno-everything /' Makefile
 
@@ -60,7 +54,6 @@ ldconfig
 echo "- Installing Python bindings..."
 if [ -d "PY_LGPIO" ]; then
     cd PY_LGPIO
-    # Pass compatibility flags to the Python extension compiler
     export CFLAGS="-std=gnu89 -fpermissive -Wno-everything"
     python3 setup.py install
     cd ..

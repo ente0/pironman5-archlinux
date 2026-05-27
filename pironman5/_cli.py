@@ -198,7 +198,7 @@ def main():
         while True:
             yesno = input("Do you want to uninstall influxdb? (y/n) ")
             if yesno.lower() == 'y':
-                os.system(f'apt-get purge influxdb -y')
+                os.system(f'pacman -Rns --noconfirm influxdb')
                 break
             elif yesno.lower() == 'n':
                 break

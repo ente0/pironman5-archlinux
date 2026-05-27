@@ -15,9 +15,7 @@ settings = {
         '--system-site-packages',
     ],
 
-    'groups': [],
-
-    # - Build required apt dependencies, default to []
+    # - Build required pacman dependencies, default to []
     # 'build_dependencies': [
     #     'curl', # for influxdb key download
     # ],
@@ -27,9 +25,9 @@ settings = {
         "umbrel_patch.sh",
     ],
 
-    # - Install from apt
-    'apt_dependencies': [
-        'python3-dev',
+    # - Install from pacman
+    'pacman_dependencies': [
+        'python',
     ],
 
     # - Install from pip
@@ -91,11 +89,11 @@ ws2812_settings = {
 }
 
 oled_settings = {
-    'groups': ['i2c'],
-    'apt_dependencies': [
-        'libjpeg-dev', # for Pillow on 32 bit OS
-        'libfreetype6-dev', # for Pillow on 32 bit OS
-        'libopenjp2-7', # for Pillow on 32 bit OS
+    # - Install from pacman
+    'pacman_dependencies': [
+        'libjpeg-turbo',
+        'freetype2',
+        'openjpeg2',
         'kmod',
         'i2c-tools',
     ],
@@ -109,16 +107,12 @@ oled_settings = {
 }
 
 gpio_settings = {
-    # - Before install scripts, default to []
-    'run_scripts_before_install': [
-        "install_lgpio.sh",
-        "fix_kali_gpio_spi.sh",
-    ],
-    'groups': ['gpio'],
-    # - Install from apt
-    'uninstall_pip_dependencies': [
-        'RPi.GPIO',
-    ],
+    # - Before install script, default to {}
+    'run_commands_before_install': {
+        'Install LGPIO': 'bash scripts/install_lgpio.sh',
+    },
+
+    'pacman_dependencies': [],
     # - Install from pip
     'pip_dependencies': [
         'rpi.lgpio',
@@ -129,11 +123,10 @@ gpio_settings = {
 }
 
 pi5_power_button_settings = {
-    'apt_dependencies': [
-        'build-essential',
+    'pacman_dependencies': [
+        'base-devel',
         'gcc',
-        'g++',
-        'python3-dev',
+        'python',
     ],
     'groups': ['input'],
     'pip_dependencies': [
@@ -153,11 +146,14 @@ dashboard_settings = {
     'groups': ['influxdb'],
     # - Build required apt dependencies, default to []
     'build_dependencies': [
-        'curl', # for influxdb key download
+        'curl',
     ],
-    # - Before install scripts, default to []
-    'run_scripts_before_install': [
-        "install_influxdb.sh",
+    'run_commands_before_install': {
+        'Setup InfluxDB': 'bash scripts/setup_influxdb.sh',
+    },
+    'pacman_dependencies': [
+        'influxdb',
+        'lsof',
     ],
     'python_source': {
         'pm_dashboard': f'git+https://github.com/sunfounder/pm_dashboard.git@{DASHBOARD_VERSION}',

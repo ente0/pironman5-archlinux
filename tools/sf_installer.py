@@ -97,9 +97,9 @@ class SF_Installer():
         'gitee': 'https://gitee.com/sunfounder/',
     }
 
-    APT_DEPENDENCIES = [
-        'python3-pip',
-        'python3-venv',
+    PACMAN_DEPENDENCIES = [
+        'python-pip',
+        'python',
         'git',
     ]
 
@@ -155,7 +155,8 @@ class SF_Installer():
         self.groups = set(self.DEFAULT_GROUPS)
         self.build_dependencies = set()
         self.before_install_scripts = set()
-        self.custom_apt_dependencies = set()
+        self.before_install_commands = {}
+        self.custom_pacman_dependencies = set()
         self.custom_uninstall_pip_dependencies = set()
         self.custom_pip_dependencies = set()
         self.python_source = {}
@@ -220,8 +221,10 @@ class SF_Installer():
             self.build_dependencies.update(settings['build_dependencies'])
         if 'run_scripts_before_install' in settings:
             self.before_install_scripts.update(settings['run_scripts_before_install'])
-        if 'apt_dependencies' in settings:
-            self.custom_apt_dependencies.update(settings['apt_dependencies'])
+        if 'run_commands_before_install' in settings:
+            self.before_install_commands.update(settings['run_commands_before_install'])
+        if 'pacman_dependencies' in settings:
+            self.custom_pacman_dependencies.update(settings['pacman_dependencies'])
         if 'uninstall_pip_dependencies' in settings:
             self.custom_uninstall_pip_dependencies.update(settings['uninstall_pip_dependencies'])
         if 'pip_dependencies' in settings:
@@ -436,13 +439,13 @@ class SF_Installer():
         for group_name in groups:
             self.add_user_to_group(self.user, group_name)
 
-    def wait_for_dpkg(self):
-        os.system('bash scripts/wait_for_dpkg.sh')
+    def wait_for_pacman(self):
+        os.system('bash scripts/wait_for_pacman.sh')
 
     def install_build_dep(self):
         self.print_title("Install build dependencies...")
-        self.do('Update package list', 'DEBIAN_FRONTEND=noninteractive apt-get update')
-        deps = [ *self.APT_DEPENDENCIES ]
+        self.do('Update package database', 'pacman -Sy --noconfirm')
+        deps = [ *self.PACMAN_DEPENDENCIES ]
 
         if self.build_dependencies is not None:
             deps += self.build_dependencies
@@ -452,7 +455,7 @@ class SF_Installer():
         width = int(os.environ.get('COLUMNS', 80))
         if len(msg) > width - 3:
             msg = msg[:width-3] + '...'
-        self.do(msg, f'DEBIAN_FRONTEND=noninteractive apt-get install -y {deps}')
+        self.do(msg, f'pacman -S --noconfirm --needed {deps}')
 
     def run_scripts_before_install(self):
         if len(self.before_install_scripts) == 0:
@@ -461,6 +464,13 @@ class SF_Installer():
         for script in self.before_install_scripts:
             self.do(f'Run scripts before install: {script}', f'bash scripts/{script}')
 
+    def run_commands_before_install(self):
+        if len(self.before_install_commands) == 0:
+            return
+        self.print_title("Run commands before install...")
+        for name, command in self.before_install_commands.items():
+            self.do(name, command)
+
     def run_scripts_after_install(self):
         if len(self.after_install_scripts) == 0:
             return
@@ -468,18 +478,18 @@ class SF_Installer():
         for script in self.after_install_scripts:
             self.do(f'Run scripts after install: {script}', f'bash scripts/{script}')
 
-    def install_apt_dep(self):
+    def install_pacman_dep(self):
         if ('no_dep' in self.args and self.args.no_dep) or \
-            len(self.custom_apt_dependencies) == 0:
+            len(self.custom_pacman_dependencies) == 0:
             return
-        self.print_title("Install APT dependencies...")
+        self.print_title("Install pacman dependencies...")
 
-        deps = " ".join(self.custom_apt_dependencies)
-        msg = f'Install APT dependencies: {deps}'
+        deps = " ".join(self.custom_pacman_dependencies)
+        msg = f'Install pacman dependencies: {deps}'
         width = int(os.environ.get('COLUMNS', 80))
         if len(msg) > width-3:
             msg = msg[:width-3] + '...'
-        self.do(msg, f'DEBIAN_FRONTEND=noninteractive apt-get install -y {deps}')
+        self.do(msg, f'pacman -S --noconfirm --needed {deps}')
 
     def create_working_dir(self):
         self.print_title("Create working directory...")
@@ -704,10 +714,11 @@ class SF_Installer():
 
     def install(self):
         self.print_title(f"Installing {self.friendly_name} {self.version}")
-        self.wait_for_dpkg()
+        self.wait_for_pacman()
         self.install_build_dep()
         self.run_scripts_before_install()
-        self.install_apt_dep()
+        self.run_commands_before_install()
+        self.install_pacman_dep()
         self.setup_user()
         self.add_user_to_groups()
         self.create_working_dir()
