@@ -10,6 +10,7 @@ Arch Linux compatible fork of the [SunFounder Pironman 5](https://github.com/sun
 - [Usage](#usage)
 - [Uninstall](#uninstall)
 - [Compatible Systems](#compatible-systems)
+- [Troubleshooting](#troubleshooting)
 - [Debug](#debug)
 - [Links](#links)
 
@@ -83,6 +84,42 @@ Systems tested or targeted on Raspberry Pi 5:
 | Arch Linux ARM (aarch64) | Target |
 | EndeavourOS ARM | Target |
 | Manjaro ARM | Target |
+
+## Troubleshooting
+
+### `ImportError: liblgpio.so.1: cannot open shared object file`
+
+On Arch Linux, `liblgpio.so.1` is installed to `/usr/local/lib` which is not in the default ldconfig search path.
+
+**Step 1** — find where the library was installed:
+
+```bash
+find / -name 'liblgpio.so*' 2>/dev/null
+```
+
+**Step 2** — if found under `/usr/local/lib`, register it and reload:
+
+```bash
+echo "/usr/local/lib" | sudo tee /etc/ld.so.conf.d/lgpio.conf
+sudo ldconfig
+sudo systemctl restart pironman5.service
+```
+
+**Step 3** — if the library is missing entirely, compile it from source:
+
+```bash
+cd ~/pironman5-endeavour
+sudo bash scripts/install_lgpio.sh
+sudo systemctl restart pironman5.service
+```
+
+**Step 4** — verify the library is visible to the linker:
+
+```bash
+ldconfig -p | grep liblgpio
+```
+
+The service file sets `LD_LIBRARY_PATH=/usr/local/lib` as an additional fallback.
 
 ## Debug
 
