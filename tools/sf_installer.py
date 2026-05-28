@@ -428,12 +428,12 @@ class SF_Installer():
             print(f"{self.WARNING} Sudo is not exist, skip sudo permission setup")
 
     def add_user_to_groups(self):
-        # Add groups to user
+        # Add groups to user (create them if missing — common on Arch Linux)
         groups = set()
         for group_name in self.groups:
             if not self.is_group_exist(group_name):
-                print(f"{self.WARNING} Group '{group_name}' does not exist, use default group 'dialout'")
-                group_name = 'dialout'
+                print(f"{self.WARNING} Group '{group_name}' does not exist, creating it")
+                self.do(f'Create group "{group_name}"', f'groupadd -r {group_name}')
             groups.add(group_name)
 
         for group_name in groups:
